@@ -1,0 +1,26 @@
+name: Deploy Node.js/Express App to cPanel
+on:
+  push:
+    branches:
+      - main # Trigger only on push events to the 'main' branch
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to cPanel via FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚚 Checkout code
+        uses: actions/checkout@v2
+
+      - name: 📂 Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: 📦 Deploy to cPanel via FTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          SERVER_DIR: /<domain or subdomain>/ # Replace with your cPanel subdomain directory
+        run: |
+          lftp -e "set ssl:verify-certificate no; mirror -R -e -x .git* -x node_modules -x .env* -x .gitignore . $SERVER_DIR; quit" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER
