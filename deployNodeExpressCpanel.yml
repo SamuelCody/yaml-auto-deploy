@@ -23,4 +23,4 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           SERVER_DIR: /<domain or subdomain>/ # Replace with your cPanel subdomain directory
         run: |
-          lftp -e "set ssl:verify-certificate no; mirror -R -e -x .git* -x node_modules -x .env* -x .gitignore . $SERVER_DIR; quit" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER
+          lftp -e "set ssl:verify-certificate no; mirror -R -e -x .git* -x node_modules -x .env* -x .gitignore -x .htaccess -x stderr.log -x tmp -x .well-known -x cgi-bin . $SERVER_DIR; quit" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER
